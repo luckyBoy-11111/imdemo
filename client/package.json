@@ -1,0 +1,22 @@
+{
+  "name": "im-client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --configLoader runner --host 0.0.0.0",
+    "preview": "vite preview --configLoader runner --host 0.0.0.0",
+    "build": "vue-tsc --noEmit && vite build --configLoader runner",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.8.1",
+    "vue": "^3.5.22"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12",
+    "vue-tsc": "^3.1.2"
+  }
+}

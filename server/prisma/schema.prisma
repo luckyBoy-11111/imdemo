@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String               @id @default(cuid()) @db.VarChar(30)
+  username     String               @unique @db.VarChar(32)
+  displayName  String               @db.VarChar(40)
+  passwordHash String               @db.VarChar(100)
+  createdAt    DateTime             @default(now())
+  memberships  ConversationMember[]
+  messages     Message[]
+  sessions     Session[]
+}
+
+model Session {
+  id        String   @id @db.Char(64)
+  userId    String   @db.VarChar(30)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Conversation {
+  id            String               @id @default(cuid()) @db.VarChar(30)
+  directKey     String               @unique @db.VarChar(61)
+  type          String               @default("direct") @db.VarChar(12)
+  createdAt     DateTime             @default(now())
+  lastMessageAt DateTime             @default(now())
+  members       ConversationMember[]
+  messages      Message[]
+
+  @@index([lastMessageAt])
+}
+
+model ConversationMember {
+  conversationId String       @db.VarChar(30)
+  userId         String       @db.VarChar(30)
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, userId])
+  @@index([userId, conversationId])
+}
+
+model Message {
+  id               Int          @id @default(autoincrement())
+  conversationId   String       @db.VarChar(30)
+  senderId         String       @db.VarChar(30)
+  clientMessageId  String       @db.VarChar(64)
+  content          String       @db.VarChar(2000)
+  createdAt        DateTime     @default(now())
+  conversation     Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender           User         @relation(fields: [senderId], references: [id])
+
+  @@unique([senderId, clientMessageId])
+  @@index([conversationId, id])
+}

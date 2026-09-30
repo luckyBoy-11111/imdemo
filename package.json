@@ -1,0 +1,10 @@
+{
+  "name": "simple-im",
+  "private": true,
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "pnpm --parallel --filter './*' dev",
+    "build": "pnpm --recursive build",
+    "typecheck": "pnpm --recursive typecheck"
+  }
+}
